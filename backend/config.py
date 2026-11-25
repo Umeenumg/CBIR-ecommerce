@@ -11,3 +11,8 @@ COLLECTION = "products"
 IMAGES_DIR = BASE_DIR / "static" / "images"
 IMAGE_SIZE = (224, 224)
 FEATURE_DIM = 1280
+
+MAX_CONTENT_LENGTH = 5 * 1024 * 1024        # 5 Mo
+ALLOWED_EXTENSIONS = {"jpg", "jpeg", "png", "webp"}
+TOP_K = 12                                   # nombre max de resultats
+SIMILARITY_THRESHOLD = 0.5                   # seuil provisoire (calibre en Day 4
