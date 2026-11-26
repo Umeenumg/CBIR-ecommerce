@@ -17,11 +17,8 @@ def load_vectors():
     cursor = products().find({"features": {"$exists": True}})
 
     for d in cursor:
-        docs.append({
-            "id": str(d["_id"]),
-            "name": d["name"],
-            "category": d["category"]
-        })
+        docs.append({"id": str(d["_id"]), "name": d["name"], "category": d["category"],
+             "brand": d.get("brand", "")})
 
         vectors.append(
             np.frombuffer(d["features"], dtype="float32")
@@ -43,7 +40,7 @@ def serialize(doc, score=None):
         "brand": doc.get("brand"),
         "price": doc.get("price"),
         "description": doc.get("description"),
-        "image_url": f"/static/images/{doc.get('image_path')}",
+        "image_url": f"/images/{doc.get('category')}/{doc.get('image_path')}",
     }
 
     if score is not None:

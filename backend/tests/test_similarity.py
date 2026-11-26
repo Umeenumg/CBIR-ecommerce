@@ -28,3 +28,13 @@ def test_seuil_elimine_les_faibles():
  
 def test_catalogue_vide():
     assert search(unit([1, 0, 0]), np.zeros((0, 3), dtype="float32")) == []
+
+
+def test_mask_exclut_les_produits_non_autorises():
+    mask = np.array([False, True, True])
+    ids = [i for i, _ in search(unit([1, 0, 0]), M, k=3, mask=mask)]
+    assert 0 not in ids and ids[0] == 1
+ 
+ 
+def test_mask_tout_faux_ne_renvoie_rien():
+    assert search(unit([1, 0, 0]), M, k=3, mask=np.array([False, False, False])) == []

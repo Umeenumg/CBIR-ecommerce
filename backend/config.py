@@ -8,7 +8,8 @@ load_dotenv(BASE_DIR / ".env")
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
 DB_NAME = os.getenv("DB_NAME", "cbir_shop")
 COLLECTION = "products"
-IMAGES_DIR = BASE_DIR / "static" / "images"
+#IMAGES_DIR = BASE_DIR / "static" / "images"
+IMAGES_DIR = BASE_DIR.parent / "data" / "raw"
 IMAGE_SIZE = (224, 224)
 FEATURE_DIM = 1280
 
