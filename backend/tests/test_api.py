@@ -34,8 +34,9 @@ def make_client(monkeypatch):
     return _make
 CATALOG = [("cam1", "camera", vec(1, 0)), ("cam2", "camera", vec(1, 0.5)),
            ("shoe", "chaussure", vec(0, 0, 1))]
-def upload(client, data, filename):
-    return client.post("/api/search", data={"image": (io.BytesIO(data), filename)},
+def upload(client, data, filename, **extra):
+    return client.post("/api/search",
+                       data={"image": (io.BytesIO(data), filename), **extra},
                        content_type="multipart/form-data")
 def test_health(make_client):
     assert make_client(CATALOG).get("/api/health").get_json() == {"status": "ok"}
@@ -67,3 +68,20 @@ def test_produit_inconnu_404(make_client):
 
 def test_id_invalide_404(make_client):
     assert make_client(CATALOG).get("/api/products/abc").status_code == 404
+
+
+def test_texte_filtre_puis_classe(make_client):
+    r = upload(make_client(CATALOG), png_bytes(), "q.png", q="cam2")
+    assert [p["name"] for p in r.get_json()["results"]] == ["cam2"]
+ 
+ 
+def test_texte_qui_ne_correspond_a_rien(make_client):
+    r = upload(make_client(CATALOG), png_bytes(), "q.png", q="zzz")
+    body = r.get_json()
+    assert r.status_code == 200 and body["results"] == []
+    assert "zzz" in body["message"]
+ 
+ 
+def test_texte_sur_categorie_non_similaire_est_ecarte_par_le_seuil(make_client):
+    r = upload(make_client(CATALOG), png_bytes(), "q.png", q="chaussure")
+    assert r.get_json()["results"] == []
